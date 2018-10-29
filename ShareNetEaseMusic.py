@@ -70,7 +70,10 @@ def fetchSongList(url):
 
 
 def syncSongsToOurSongList(diffSongs, op):
-	print("diffSongs is" + diffSongs + "op is " + op)
+	print("diffSongs is")
+	print(diffSongs)
+	print("op is ")
+	print(op)
 	MyCookie = http.cookiejar.CookieJar()  # 声明一个CookieJar对象实例来保存cookie
 	handler = urllib.request.HTTPCookieProcessor(MyCookie)  # 利用urllib2库的HTTPCookieProcessor对象来创建cookie处理器
 	opener = urllib.request.build_opener(handler)  # 通过handler来构建opener
