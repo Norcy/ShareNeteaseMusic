@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+	integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#myButton').click(function() {
+				$('#result').show(0);
+				$.ajax({
+					type: "GET",
+					url: "SyncMusic.php"
+				}).done(function( msg ) {
+					// alert( "Data Saved: " + msg );
+					$('#result').text("同步成功");
+					$('#result').delay(3000).hide(0);
+				});    
+			});
+		})
+	</script>
+	<title>你和我的音乐时光</title>
+</head>
+<body style="height: 100%">
+	
+	<div style='background:url("bg.png") no-repeat; width:100%; height:100%; border:1px solid #def;background-size: cover; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover;'>
+		<div class="container-fluid" align="center" style="display: block;margin-top:20%;">
+			<button id="myButton" class="btn btn-success">同步歌单</button>	
+			<p class="bg-success" id="result" style="margin-top: 10%;margin-left: 20%;margin-right: 20%"></p>
+		</div>
+	</div>
+
+	<!-- <div class="jumbotron" >
+		<p style="font-size: 40pt" class="text-primary lead">你和我的音乐时光</p>
+		<p style="font-size: 10pt"> For 小可爱</p>
+		<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+	</div> -->
+</body>
+</html>
