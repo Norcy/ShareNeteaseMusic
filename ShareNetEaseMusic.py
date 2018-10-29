@@ -19,7 +19,7 @@ FooSongListId = "2434340328"
 BarSongListId = "2435224926"
 OurSongListId = "2435116800"
 AddSongUrl = "/playlist/tracks?op=add&pid={}&tracks={}"
-DelSongUrl = "/playlist/tracks?op=add&pid={}&tracks={}"
+DelSongUrl = "/playlist/tracks?op=del&pid={}&tracks={}"
 
 def getHtmlData(url):
     url = (url+"&timestamp=")+str(int(time.time()))
@@ -143,8 +143,11 @@ def main():
 	print("songListToDel:")
 	print(songListToDel)
 
-	syncSongsToOurSongList(songListToAdd, "Add")
-	syncSongsToOurSongList(songListToDel, "Del")
+	if len(songListToAdd):
+		syncSongsToOurSongList(songListToAdd, "Add")
+
+	if len(songListToDel):
+		syncSongsToOurSongList(songListToDel, "Del")
 
 if __name__=="__main__":
     main()
