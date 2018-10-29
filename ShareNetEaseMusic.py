@@ -19,6 +19,7 @@ FooSongListId = "2434340328"
 BarSongListId = "2435224926"
 OurSongListId = "2435116800"
 AddSongUrl = "/playlist/tracks?op=add&pid={}&tracks={}"
+DelSongUrl = "/playlist/tracks?op=add&pid={}&tracks={}"
 
 def getHtmlData(url):
     url = (url+"&timestamp=")+str(int(time.time()))
@@ -67,21 +68,8 @@ def fetchSongList(url):
 	print(songIdList)
 	return songIdList
 
-def getDiffSongs():
-	FooSongList = fetchSongList(RootUrl+FetchSongListUrl+FooSongListId)
-	BarSongList = fetchSongList(RootUrl+FetchSongListUrl+BarSongListId)
-	OurSongList = fetchSongList(RootUrl+FetchSongListUrl+OurSongListId)
 
-	ourNewSongList = list(set(FooSongList+BarSongList))
-	print("ourNewSongList:")
-	print(ourNewSongList)
-	diffSongList = list(set(ourNewSongList)-set(OurSongList));
-	print("diffSongList:")
-	print(diffSongList)
-	return diffSongList
-
-
-def addSongsToOurSongList(diffSongs):
+def syncSongsToOurSongList(diffSongs, op):
 	MyCookie = http.cookiejar.CookieJar()  # 声明一个CookieJar对象实例来保存cookie
 	handler = urllib.request.HTTPCookieProcessor(MyCookie)  # 利用urllib2库的HTTPCookieProcessor对象来创建cookie处理器
 	opener = urllib.request.build_opener(handler)  # 通过handler来构建opener
@@ -104,7 +92,15 @@ def addSongsToOurSongList(diffSongs):
 
 
 	diffSongsString = ','.join(str(e) for e in diffSongs)
-	addUrl = (RootUrl+AddSongUrl).format(OurSongListId, diffSongsString)
+
+	syncSongUrl = AddSongUrl
+
+	if op == "Add":
+		syncSongUrl = AddSongUrl
+	else:
+		syncSongUrl = DelSongUrl
+
+	addUrl = (RootUrl+syncSongUrl).format(OurSongListId, diffSongsString)
 
 	addRequest = urllib.request.Request(addUrl, data=None, headers=head)
 	
@@ -126,13 +122,29 @@ def addSongsToOurSongList(diffSongs):
 
 	print(addResult);
 	if addResult["code"] == 200:
-		print("Add Success")
+		print("Sync Success")
 	else:
-		print("Add Fail. errorCode:{} errorMsg:{}".format(addResult["code"], addResult["msg"]))
+		print("Sync Fail. errorCode:{} errorMsg:{}".format(addResult["code"], addResult["msg"]))
 
 def main():
-	diffSongList = getDiffSongs()
-	addSongsToOurSongList(diffSongList)
+	FooSongList = fetchSongList(RootUrl+FetchSongListUrl+FooSongListId)
+	BarSongList = fetchSongList(RootUrl+FetchSongListUrl+BarSongListId)
+	OurOldSongList = fetchSongList(RootUrl+FetchSongListUrl+OurSongListId)
+
+	ourNewSongList = list(set(FooSongList+BarSongList))
+	print("ourNewSongList:")
+	print(ourNewSongList)
+
+	songListToAdd = list(set(ourNewSongList)-set(OurOldSongList));
+	print("songListToAdd:")
+	print(songListToAdd)
+
+	songListToDel = list(set(OurOldSongList)-set(ourNewSongList));
+	print("songListToDel:")
+	print(songListToDel)
+
+	syncSongsToOurSongList(songListToAdd, "Add")
+	syncSongsToOurSongList(songListToDel, "Del")
 
 if __name__=="__main__":
     main()
